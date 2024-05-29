@@ -1,2 +1,5 @@
 numpy==1.26.4
 validators==0.28.3
+asyncio==3.4.3
+aiohttp==3.9.5
+tqdm==4.66.4
