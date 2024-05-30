@@ -1,9 +1,9 @@
 # AdeleyeFireWorksAI
 
 ## Objectives and Goals
-- Takes an HTTP adress as input
+- Takes an HTTP adressas input plus multiple adresses. 
 - Supports a --qps flag to generate requests at a given fixed QPS
-- Reports Latencies and error rates
+- Reports Latencies and error rates plus latencies and erros of concurrent request.
 - Make a buildable Docker image
 
 ## Running Example Code
