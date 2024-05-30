@@ -15,7 +15,9 @@ async def runURLRequest(url,session):
     try:
         response = await session.get(url)
         end_time = time.time() 
-        response.status
+        res = response.status
+        if res < 200 or res > 299:
+            num_errors += 1
         latency = end_time - start_time
     except Exception as e:
         end_time = time.time() 
@@ -24,32 +26,40 @@ async def runURLRequest(url,session):
         
     return num_errors,latency
 
-async def urlRequestStats(url,num_request,num_congruent):
+async def urlRequestStats(url,total_num_request,num_concurrent):
     async with aiohttp.ClientSession() as session:
         totalErrors = 0 
         totalLatency = 0 
+        num_request = total_num_request
         pbar = tqdm(total=num_request, desc="Processing Requests")
         while num_request > 0:
             tasks = []
-            num_request -= num_congruent
-            for _ in range(num_congruent):
+            
+            #Make sure we run the exact number of request. 
+            if num_request > num_concurrent:
+                num_request -= num_concurrent
+            else:
+                num_concurrent = num_request
+                num_request = 0
+
+            for _ in range(num_concurrent):
                 tasks.append(runURLRequest(url,session))
             batchResponses = await asyncio.gather(*tasks,return_exceptions=True)
             errorSum,latencySum = map(sum,zip(*batchResponses))
             totalErrors += errorSum
             totalLatency += latencySum
-            pbar.update(num_congruent)
+            pbar.update(num_concurrent)
 
     pbar.close()
 
-    average_latency = totalLatency / num_request if num_request > 0 else 0
-    error_rate = totalErrors / num_request if num_request > 0 else 0
-    print(f"The error rate was: {error_rate}")
+    average_latency = totalLatency / total_num_request if total_num_request > 0 else 0
+    error_rate = totalErrors / total_num_request if total_num_request > 0 else 0
+    print(f"The Avereage Error Rate is: {error_rate}")
     print(f"The Average Latency is: {average_latency}")
     
 
-def main(url,num_request,num_congruent):
-    asyncio.run(urlRequestStats(url,num_request,num_congruent))
+def main(url,num_request,num_concurrent):
+    asyncio.run(urlRequestStats(url,num_request,num_concurrent))
 
 
 
@@ -57,9 +67,9 @@ if __name__ == "__main__":
     # Parse URL(s) 
     parser = argparse.ArgumentParser(description='Arguments for Https Load tester')
     parser.add_argument('--url_link', type=str, help='Enter URL Link you want to test')
-    parser.add_argument('--qps', action='store_true', help='Generate request at given fixed QPS')
+    parser.add_argument('--qps', action='store_true', help='Generate request at given fixed QPS. Plese note, if the --c flag is not set to zero, concurrent request will be sent at the fixed QPS.')
     parser.add_argument('--n',type=int, default=1000, help='total number of request to preform.')
-    parser.add_argument('--c',type=int, default=100, help='number of congrent request to preform untill total number of request is reached.')
+    parser.add_argument('--c',type=int, default=100, help='number of concurrent request to preform untill total number of request is reached.')
     parse_args,unknown = parser.parse_known_args()
 
     #TODO: 
