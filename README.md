@@ -7,7 +7,7 @@
 - Make a buildable Docker image
 
 ## Running Example Code
-A dockerfile is used to run the  `generalPurposeHTTPS_LoadTest.py` file. This file can be modified to test a single url or multiple. 
+A dockerfile is used to run the  `generalPurposeHTTPS_LoadTest.py` file. This file can be modified to test a single url or multiple as well as save or print results. 
 1. Testing a singel URL
    -   This line in the docerfile:
        ```
@@ -20,11 +20,21 @@ A dockerfile is used to run the  `generalPurposeHTTPS_LoadTest.py` file. This fi
         CMD python ./generalPurposeHTTP_LoadTest.py --url_csv urllist.csv --qps 10 --n 1000 --c 100
        ```
        is an example of how to test a multiple URLs. A `.csv` file is requried for this test.
-
+3. Saving results to .txt file
+   -   The defult is to print the results. Using the `--s` flag however, you can save results to a .txt file. 
+   
 Once your dockerFile is configured, you can build and run it similarly inside of this cloned repo:
 ```
 docker build -t fireworksai:app .
 docker run -it --rm fireworksai:app
+```
+
+If you choose to use the `--s` file. Be sure to cp your output file to your local host.
+```
+docker build -t fireworksai:app .
+docker run --name fireworks fireworksai:app
+docker cp fireworks:/usr/src/fireworksapp/outputlog.txt .
+docker rm fireworks
 ```
   
 ## Testing/Comparing Code
