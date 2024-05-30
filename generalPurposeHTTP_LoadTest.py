@@ -8,8 +8,17 @@ from tqdm import tqdm
 import os
 import pandas as pd
 
-
 async def runURLRequest(url,session):
+    """ Calls a request to url.
+
+    Args:
+      url:
+      session: number of request.
+
+    Returns:
+      current latency and error count. 
+    """
+
     num_errors = 0
     start_time = time.monotonic()
     try:
@@ -27,6 +36,15 @@ async def runURLRequest(url,session):
     return num_errors,latency
 
 async def urlRequestStats(url,total_num_request,num_concurrent,qps):
+    """Shell for calling request to url and recording latency and error metrics.
+
+    Args:
+      url_or_csv: A str URL or path to a .csv file.
+      num_reqest: number of request.
+      num_concurrent: number of concurrent request.
+      qps: Fixed QPS to generate request.
+
+    """
     async with aiohttp.ClientSession() as session:
         totalErrors = 0 
         totalLatency = 0 
@@ -64,12 +82,22 @@ async def urlRequestStats(url,total_num_request,num_concurrent,qps):
     average_latency = totalLatency / total_num_request if total_num_request > 0 else 0
     error_rate = totalErrors / total_num_request if total_num_request > 0 else 0
     print(f"Testing URL: {url}")
-    print(f"The Avereage Error Rate is: {error_rate}")
+    print(f"The Avereage Error Rate is: {error_rate}%")
     print(f"The Average Latency is: {average_latency:.2f} seconds")
     print(f"This test was completed with Total request: {total_num_request}, Concurrent request: {num_concurrent}, with a QPS of: {qps}")
     
 
 def main(url_or_csv,num_request,num_concurrent,qps):
+    """Main fuction that load tests either one url or multiple depending if we recived a url or csv file.
+
+    Args:
+      url_or_csv: A str URL or path to a .csv file.
+      num_reqest: number of request.
+      num_concurrent: number of concurrent request.
+      qps: Fixed QPS to generate request.
+
+    """
+
     if not url_or_csv.lower().endswith('.csv'):
         asyncio.run(urlRequestStats(url_or_csv,num_request,num_concurrent,qps))
     else:
@@ -88,6 +116,12 @@ def main(url_or_csv,num_request,num_concurrent,qps):
                 asyncio.run(urlRequestStats(url,num_request,num_concurrent,qps))
 
 if __name__ == "__main__":
+
+    """
+    Python Main for running Custom Http Load testing. 
+    Arguments are parsed here and sent to rest of code block
+
+    """
     # Parse URL(s) 
     parser = argparse.ArgumentParser(description='Arguments for Https Load tester')
     parser.add_argument('--url_link', type=str, help='Enter URL Link you want to test')
@@ -97,19 +131,23 @@ if __name__ == "__main__":
     parser.add_argument('--c',type=int, default=100, help='number of concurrent request to preform untill total number of request is reached.')
     parse_args,unknown = parser.parse_known_args()
 
-    #TODO: 
-    # 2. Accpet a csv file of Http Websites
-    # 3. Save results to a txt file. 
-
+    # Checks for URL and CSV 
     if not parse_args.url_link and not parse_args.url_csv:
         print("Please enter a url link or csv file you want to test. Example: 'docker run fireworksai:app --url_link http:/www.google.com' ")
         exit()
-    
-    if parse_args.url_link:
-        # Check if URL is valid
+    if parse_args.url_link: # url flag overides csv file. (design choice)
         if not validators.url(parse_args.url_link):
             print(f"{parse_args.url_link} not valid. Please check link and be sure to include full https://... url.")
             exit()
         main(parse_args.url_link,parse_args.n,parse_args.c,parse_args.qps)
     elif parse_args.url_csv:
         main(parse_args.url_csv,parse_args.n,parse_args.c,parse_args.qps)
+
+
+
+
+#Code Notes and Things 
+#TODO: 
+# 3. Save results to a txt file.
+# 4. Graphs to show latancy and errors
+ 
