@@ -1,27 +1,27 @@
 # AdeleyeFireWorksAI
 
 ## Objectives and Goals
-- Takes an HTTP adressas input plus multiple adresses. 
+- Takes an HTTP address input plus multiple addresses. 
 - Supports a --qps flag to generate requests at a given fixed QPS
-- Reports Latencies and error rates plus latencies and erros of concurrent request.
+- Reports Latencies and error rates plus latencies and errors of concurrent requests.
 - Make a buildable Docker image
 
 ## Running Example Code
 A dockerfile is used to run the  `generalPurposeHTTPS_LoadTest.py` file. This file can be modified to test a single url or multiple as well as save or print results. 
-1. Testing a singel URL
-   -   This line in the docerfile:
+1. Testing a single URL
+   -   This line in the dockerfile:
        ```
        CMD python ./generalPurposeHTTP_LoadTest.py --url_link http://httpbin.org/status/400%20%2C200 --qps 10 --n 1000 --c 100
        ```
-       is an example of how to test a singal URL with flags for QPS, -n: number of request, and -c: number of concurrent request. 
+       is an example of how to test a single URL with flags for QPS, -n: number of request, and -c: number of concurrent request. 
 2. Testing multiple URLs
-   -   This line in the docerfile:
+   -   This line in the dockerfile:
        ```
         CMD python ./generalPurposeHTTP_LoadTest.py --url_csv urllist.csv --qps 10 --n 1000 --c 100
        ```
-       is an example of how to test a multiple URLs. A `.csv` file is requried for this test.
+       is an example of how to test a multiple URLs. A `.csv` file is required for this test.
 3. Saving results to .txt file
-   -   The defult is to print the results. Using the `--s` flag however, you can save results to a .txt file. 
+   -   The default is to print the results. Using the `--s` flag however, you can save results to a .txt file. 
    
 Once your dockerFile is configured, you can build and run it similarly inside of this cloned repo:
 ```
