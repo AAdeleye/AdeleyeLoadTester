@@ -1,0 +1,26 @@
+Date and Time: 2024-05-30 16:28:38.640409
+
+Testing URL: http://httpbin.org/status/400%20%2C200The Avereage Error Rate is: 0.504%The Average Latency is: 0.27 secondsThis test was completed with Total request: 1000, Concurrent request: 100, with a QPS of: 10Date and Time: 2024-05-30 16:40:44.552974
+Testing URL: http://httpbin.org/status/400%20%2C200
+The Avereage Error Rate is: 0.505%
+The Average Latency is: 0.23 seconds
+This test was completed with Total request: 1000, Concurrent request: 100, with a QPS of: 10
+#################################################################################################################################
+Date and Time: 2024-05-30 16:40:58.846271
+Testing URL: http://httpbin.org/status/400%20
+The Avereage Error Rate is: 1.0%
+The Average Latency is: 0.23 seconds
+This test was completed with Total request: 1000, Concurrent request: 100, with a QPS of: 10
+#################################################################################################################################
+Date and Time: 2024-05-30 16:41:09.353179
+Testing URL: http://httpbin.org/status/200%20
+The Avereage Error Rate is: 0.0%
+The Average Latency is: 0.21 seconds
+This test was completed with Total request: 1000, Concurrent request: 100, with a QPS of: 10
+#################################################################################################################################
+Date and Time: 2024-05-30 16:41:23.150600
+Testing URL: http://httpbin.org/status/400%2C200%2C500
+The Avereage Error Rate is: 0.672%
+The Average Latency is: 0.22 seconds
+This test was completed with Total request: 1000, Concurrent request: 100, with a QPS of: 10
+#################################################################################################################################

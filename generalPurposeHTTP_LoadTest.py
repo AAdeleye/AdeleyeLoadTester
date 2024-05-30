@@ -7,6 +7,7 @@ import aiohttp
 from tqdm import tqdm
 import os
 import pandas as pd
+from datetime import datetime
 
 async def runURLRequest(url,session):
     """ Calls a request to url.
@@ -35,7 +36,7 @@ async def runURLRequest(url,session):
         
     return num_errors,latency
 
-async def urlRequestStats(url,total_num_request,num_concurrent,qps):
+async def urlRequestStats(url,total_num_request,num_concurrent,qps,s):
     """Shell for calling request to url and recording latency and error metrics.
 
     Args:
@@ -81,13 +82,24 @@ async def urlRequestStats(url,total_num_request,num_concurrent,qps):
 
     average_latency = totalLatency / total_num_request if total_num_request > 0 else 0
     error_rate = totalErrors / total_num_request if total_num_request > 0 else 0
-    print(f"Testing URL: {url}")
-    print(f"The Avereage Error Rate is: {error_rate}%")
-    print(f"The Average Latency is: {average_latency:.2f} seconds")
-    print(f"This test was completed with Total request: {total_num_request}, Concurrent request: {num_concurrent}, with a QPS of: {qps}")
-    
 
-def main(url_or_csv,num_request,num_concurrent,qps):
+    if s:
+        current_datetime = datetime.now()
+        with open('outputlog.txt', 'a') as file:
+            file.write(f"Date and Time: {current_datetime}\n")
+            file.write(f"Testing URL: {url}\n")
+            file.write(f"The Avereage Error Rate is: {error_rate}%\n")
+            file.write(f"The Average Latency is: {average_latency:.2f} seconds\n")
+            file.write(f"This test was completed with Total request: {total_num_request}, Concurrent request: {num_concurrent}, with a QPS of: {qps}\n")
+            file.write(f"#################################################################################################################################\n")
+    else:
+        print(f"\nTesting URL: {url}")
+        print(f"The Avereage Error Rate is: {error_rate}%")
+        print(f"The Average Latency is: {average_latency:.2f} seconds")
+        print(f"This test was completed with Total request: {total_num_request}, Concurrent request: {num_concurrent}, with a QPS of: {qps}")
+
+
+def main(url_or_csv,num_request,num_concurrent,qps,s):
     """Main fuction that load tests either one url or multiple depending if we recived a url or csv file.
 
     Args:
@@ -99,7 +111,7 @@ def main(url_or_csv,num_request,num_concurrent,qps):
     """
 
     if not url_or_csv.lower().endswith('.csv'):
-        asyncio.run(urlRequestStats(url_or_csv,num_request,num_concurrent,qps))
+        asyncio.run(urlRequestStats(url_or_csv,num_request,num_concurrent,qps,s))
     else:
         if not os.path.isfile(url_or_csv):
             print(f"Error: The file {url_or_csv} does not exist.")
@@ -113,7 +125,7 @@ def main(url_or_csv,num_request,num_concurrent,qps):
             if not validators.url(url):
                 print(f"{url} not valid. Please check link and be sure to include full https://... url.")
             else:
-                asyncio.run(urlRequestStats(url,num_request,num_concurrent,qps))
+                asyncio.run(urlRequestStats(url,num_request,num_concurrent,qps,s))
 
 if __name__ == "__main__":
 
@@ -129,6 +141,7 @@ if __name__ == "__main__":
     parser.add_argument('--qps', type=int, default=0, help='Generate request at given fixed QPS. Plese note, if the --c flag is not set to zero, concurrent request may be sent at the fixed QPS.')
     parser.add_argument('--n',type=int, default=1000, help='total number of request to preform.')
     parser.add_argument('--c',type=int, default=100, help='number of concurrent request to preform untill total number of request is reached.')
+    parser.add_argument('--s',action="store_true", help='Save results to a .txt file rather than print them')
     parse_args,unknown = parser.parse_known_args()
 
     # Checks for URL and CSV 
@@ -139,15 +152,20 @@ if __name__ == "__main__":
         if not validators.url(parse_args.url_link):
             print(f"{parse_args.url_link} not valid. Please check link and be sure to include full https://... url.")
             exit()
-        main(parse_args.url_link,parse_args.n,parse_args.c,parse_args.qps)
+        main(parse_args.url_link,parse_args.n,parse_args.c,parse_args.qps,parse_args.s)
     elif parse_args.url_csv:
-        main(parse_args.url_csv,parse_args.n,parse_args.c,parse_args.qps)
+        main(parse_args.url_csv,parse_args.n,parse_args.c,parse_args.qps,parse_args.s)
 
 
 
 
-#Code Notes and Things 
-#TODO: 
-# 3. Save results to a txt file.
-# 4. Graphs to show latancy and errors
+"""
+Code Notes and Things: 
+
+TODO: 
+4. Save results to a txt file. (Done at 9:43am with minimal testing)
+5. Graphs to show latancy and errors. 
+6. Add any more intresting load measurments. 
+"""
+
  
