@@ -27,7 +27,9 @@ docker build -t fireworksai:app .
 docker run -it --rm fireworksai:app
 ```
   
-
+## Testing/Comparing Code
+The file test.py has a base level implementation of a web load testing software called [Locus](https://docs.locust.io/en/latest/what-is-locust.html)
+Apart from this, online websites such as [PingDom](https://tools.pingdom.com/#63f2809af8000000) can be used. 
 
 
 
