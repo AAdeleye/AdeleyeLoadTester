@@ -1,4 +1,4 @@
-# AdeleyeFireWorksAI
+# AdeleyeLoadTester
 
 ## Objectives and Goals
 - Takes an HTTP address input plus multiple addresses. 
